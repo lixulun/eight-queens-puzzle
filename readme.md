@@ -12,3 +12,10 @@
 - go
 - ruby
 - crystal
+
+### Benchmark example
+
+```
+# use hyperfine
+hyperfine "./run.py -x python"
+```
