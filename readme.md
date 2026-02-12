@@ -1,8 +1,14 @@
-## 使用各种语言求解八皇后问题
+## Resolve eight queens puzzle in different languages
 
-## 运行
+### Run python version for example
 
 ```
-# 运行 python 版本
-./runner.py -x python
+./run.py -x python
 ```
+
+### All versions
+
+- python
+- go
+- ruby
+- crystal
