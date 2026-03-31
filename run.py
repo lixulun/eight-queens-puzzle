@@ -126,12 +126,43 @@ def run_ruby_version():
     run()
 
 
+def run_rust_version():
+    cwd = Path() / "rust"
+    out = (Path() / ".build" / "rust_solve").absolute()
+
+    def check_compiler():
+        exists_check = shell("which rustc", check=False, capture_output=True)
+        if exists_check.returncode > 0:
+            err('"rustc" not found. Please ensure "rustc" is in your PATH.')
+        log(f"Rust compiler: {exists_check.stdout.decode('utf-8').strip()}")
+
+    def check_version():
+        version_check = shell("rustc --version", capture_output=True)
+        log(f"Rust compiler version: {version_check.stdout.decode('utf-8').strip()}")
+
+    def compile():
+        source = (cwd / "solve.rs").absolute()
+        if not out.exists() or source.stat().st_mtime > out.stat().st_mtime:
+            shell(f"rustc -o '{out}' '{source}'", cwd=cwd)
+            print(f"Built executable: {out}", file=sys.stderr)
+        else:
+            print(f"Using cached executable: {out}")
+
+    def run():
+        shell(f"time {out}")
+
+    check_compiler()
+    check_version()
+    compile()
+    run()
+
+
 def main():
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument(
         "-x",
         "--program",
-        choices={"python", "crystal", "go", "ruby"},
+        choices={"python", "crystal", "go", "ruby", "rust"},
         help="select a version to run",
     )
     parser.add_argument(
@@ -150,6 +181,8 @@ def main():
         run_go_version()
     elif args.program == "ruby":
         run_ruby_version()
+    elif args.program == "rust":
+        run_rust_version()
 
     if args.remove_output:
         build = Path() / ".build"
